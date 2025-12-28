@@ -25,24 +25,16 @@ const getRecipeById = async (req, res) => {
 
 const createRecipe = async (req, res) => {
   try {
-    const recipe = new Recipe({
-      title: req.body.title,
-      description: req.body.description,
-      ingredients: req.body.ingredients
-        ? req.body.ingredients.split(',')
-        : [],
-      steps: req.body.steps,
-      prepTime: req.body.prepTime,
-      category: req.body.category,
-      difficulty: req.body.difficulty,
-      servings: req.body.servings
-    })
+    console.log('REQ BODY:', req.body)
+
+    const recipe = new Recipe(req.body)
 
     await recipe.save()
+
     res.status(201).json(recipe)
   } catch (error) {
-    console.error(error)
-    res.status(400).json({ message: 'Error creando receta' })
+    console.error('ERROR CREATE:', error)
+    res.status(500).json({ message: 'ERROR REAL', error: error.message })
   }
 }
 
