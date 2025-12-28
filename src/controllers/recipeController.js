@@ -26,16 +26,40 @@ const getRecipeById = async (req, res) => {
 
 const createRecipe = async (req, res) => {
   try {
-    if (req.body.ingredients) {
-      req.body.ingredients = req.body.ingredients.split(',')
+    let imageUrl = null
+
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: 'recipes' },
+          (error, result) => {
+            if (error) reject(error)
+            else resolve(result)
+          }
+        )
+        stream.end(req.file.buffer)
+      })
+
+      imageUrl = uploadResult.secure_url
     }
 
-    const recipe = await Recipe.create(req.body)
+    const recipe = new Recipe({
+      title: req.body.title,
+      description: req.body.description,
+      ingredients: req.body.ingredients?.split(',') || [],
+      steps: req.body.steps,
+      prepTime: req.body.prepTime,
+      category: req.body.category,
+      difficulty: req.body.difficulty,
+      servings: req.body.servings,
+      image: imageUrl
+    })
 
-    return res.status(201).json(recipe)
+    await recipe.save()
+    res.status(201).json(recipe)
   } catch (error) {
-    console.error('CREATE RECIPE ERROR:', error)
-    return res.status(400).json({ message: error.message })
+    console.error(error)
+    res.status(400).json({ message: 'Error creando receta' })
   }
 }
 
