@@ -11,9 +11,7 @@ const {
 
 router.get('/', getAllRecipes)
 router.get('/:id', getRecipeById)
-
-router.post('/', upload.single('image'), createRecipe)
-
+router.post('/', createRecipe)
 router.put('/:id', updateRecipe)
 router.delete('/:id', deleteRecipe)
 
