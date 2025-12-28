@@ -28,7 +28,7 @@ const createRecipe = async (req, res) => {
     const data = {
       ...req.body,
       ingredients: req.body.ingredients
-        ? req.body.ingredients.split(',').map(i => i.trim())
+        ? req.body.ingredients.split(',').map((i) => i.trim())
         : [],
       prepTime: Number(req.body.prepTime),
       servings: Number(req.body.servings),
