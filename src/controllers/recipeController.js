@@ -25,8 +25,13 @@ const getRecipeById = async (req, res) => {
 }
 
 const createRecipe = async (req, res) => {
+  console.log('BODY:', req.body)
+console.log('FILE:', req.file)
   try {
     let imageUrl = null
+    if (!req.body.title || !req.body.description) {
+      return res.status(400).json({ message: 'Faltan campos obligatorios' })
+    }
 
     if (req.file) {
       const uploadResult = await new Promise((resolve, reject) => {
@@ -35,7 +40,7 @@ const createRecipe = async (req, res) => {
           (error, result) => {
             if (error) reject(error)
             else resolve(result)
-          }
+          },
         )
         stream.end(req.file.buffer)
       })
@@ -52,24 +57,23 @@ const createRecipe = async (req, res) => {
       category: req.body.category,
       difficulty: req.body.difficulty,
       servings: req.body.servings,
-      image: imageUrl
+      image: imageUrl,
     })
 
     await recipe.save()
     res.status(201).json(recipe)
   } catch (error) {
-    console.error(error)
-    res.status(400).json({ message: 'Error creando receta' })
-  }
+  console.error('CREATE RECIPE ERROR:', error)
+  res.status(400).json({ message: 'Error creando receta' })
+}
 }
 
 const updateRecipe = async (req, res) => {
   try {
-    const recipe = await Recipe.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    )
+    const recipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    })
 
     if (!recipe) {
       return res.status(404).json({ message: 'Receta no encontrada' })
@@ -100,5 +104,5 @@ module.exports = {
   getRecipeById,
   createRecipe,
   updateRecipe,
-  deleteRecipe
+  deleteRecipe,
 }
