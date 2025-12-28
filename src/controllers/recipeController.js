@@ -1,5 +1,4 @@
 const Recipe = require('../models/Recipe')
-const cloudinary = require('../config/cloudinary')
 
 const getAllRecipes = async (req, res) => {
   try {
