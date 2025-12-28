@@ -5,28 +5,44 @@ const recipeSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     description: {
       type: String,
-      required: true
+      required: true,
     },
     ingredients: {
       type: [String],
-      required: true
+      required: true,
     },
     steps: {
       type: String,
-      required: true
+      required: true,
     },
     prepTime: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
+    image: {
+      type: String,
+    },
+    category: {
+      type: String,
+      required: true,
+    },
+    difficulty: {
+      type: String,
+      enum: ['Fácil', 'Media', 'Difícil'],
+      required: true,
+    },
+    servings: {
+      type: Number,
+      required: true,
+    },
   },
   {
-    timestamps: true
-  }
+    timestamps: true,
+  },
 )
 
 module.exports = mongoose.model('Recipe', recipeSchema)

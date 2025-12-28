@@ -150,12 +150,12 @@ postman_collection.json
 
 ## Estado del proyecto
 
-* CRUD completo de recetas
-* Conexión a MongoDB Atlas
-* Patrón MVC aplicado
-* API documentada con Postman
-* Código validado con ESLint y Prettier
-* Backend listo para despliegue en Render
+- CRUD completo de recetas
+- Conexión a MongoDB Atlas
+- Patrón MVC aplicado
+- API documentada con Postman
+- Código validado con ESLint y Prettier
+- Backend listo para despliegue en Render
 
 ---
 
