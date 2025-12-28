@@ -26,23 +26,16 @@ const getRecipeById = async (req, res) => {
 
 const createRecipe = async (req, res) => {
   try {
-    console.log('BODY:', req.body)
-    console.log('FILE:', req.file)
-
     if (req.body.ingredients) {
       req.body.ingredients = req.body.ingredients.split(',')
     }
 
     const recipe = await Recipe.create(req.body)
 
-    res.status(201).json(recipe)
+    return res.status(201).json(recipe)
   } catch (error) {
-    console.log('MONGOOSE ERROR:', error)
-    res.status(500).json({
-      name: error.name,
-      message: error.message,
-      errors: error.errors
-    })
+    console.error('CREATE RECIPE ERROR:', error)
+    return res.status(400).json({ message: error.message })
   }
 }
 
