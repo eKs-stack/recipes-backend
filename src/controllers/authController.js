@@ -5,17 +5,27 @@ const User = require('../models/User')
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body
+    const normalizedEmail = email?.trim().toLowerCase()
+    const normalizedUsername = username?.trim()
 
-    const exists = await User.findOne({ email })
-    if (exists) {
+    if (!normalizedEmail || !normalizedUsername || !password) {
+      return res.status(400).json({ message: 'Datos incompletos' })
+    }
+
+    const existsByEmail = await User.findOne({ email: normalizedEmail })
+    if (existsByEmail) {
+      return res.status(400).json({ message: 'Usuario ya existe' })
+    }
+    const existsByUsername = await User.findOne({ username: normalizedUsername })
+    if (existsByUsername) {
       return res.status(400).json({ message: 'Usuario ya existe' })
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
     const user = await User.create({
-      username,
-      email,
+      username: normalizedUsername,
+      email: normalizedEmail,
       password: hashedPassword,
     })
 
@@ -35,16 +45,25 @@ const register = async (req, res) => {
     console.error(error)
     res.status(400).json({
       message: 'Error registrando usuario',
-      error: error.message,
     })
   }
 }
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { email, username, password } = req.body
+    const identifier = (email || username || '').trim()
 
-    const user = await User.findOne({ email })
+    if (!identifier || !password) {
+      return res.status(400).json({ message: 'Credenciales inválidas' })
+    }
+
+    const isEmail = identifier.includes('@')
+    const user = await User.findOne(
+      isEmail
+        ? { email: identifier.toLowerCase() }
+        : { username: identifier },
+    )
     if (!user) {
       return res.status(400).json({ message: 'Credenciales inválidas' })
     }

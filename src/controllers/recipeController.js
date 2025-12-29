@@ -1,5 +1,25 @@
 const Recipe = require('../models/Recipe')
 
+const buildRecipeUpdate = (body) => {
+  const allowedFields = [
+    'title',
+    'description',
+    'ingredients',
+    'steps',
+    'prepTime',
+    'category',
+    'difficulty',
+    'servings',
+  ]
+
+  return allowedFields.reduce((updates, field) => {
+    if (body[field] !== undefined) {
+      updates[field] = body[field]
+    }
+    return updates
+  }, {})
+}
+
 // 🌍 públicas
 const getAllRecipes = async (req, res) => {
   try {
@@ -46,10 +66,11 @@ const createRecipe = async (req, res) => {
 
 const updateRecipe = async (req, res) => {
   try {
+    const updates = buildRecipeUpdate(req.body)
     const recipe = await Recipe.findOneAndUpdate(
       { _id: req.params.id, owner: req.user.id },
-      req.body,
-      { new: true }
+      updates,
+      { new: true, runValidators: true }
     )
 
     if (!recipe) {
