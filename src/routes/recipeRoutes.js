@@ -1,3 +1,4 @@
+const auth = require('../middlewares/auth')
 const express = require('express')
 const router = express.Router()
 const {
@@ -10,8 +11,10 @@ const {
 
 router.get('/', getAllRecipes)
 router.get('/:id', getRecipeById)
-router.post('/', createRecipe)
-router.put('/:id', updateRecipe)
-router.delete('/:id', deleteRecipe)
+
+router.post('/', auth, createRecipe)
+
+router.put('/:id', auth, updateRecipe)
+router.delete('/:id', auth, deleteRecipe)
 
 module.exports = router

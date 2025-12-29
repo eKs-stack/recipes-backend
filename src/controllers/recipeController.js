@@ -25,22 +25,14 @@ const getRecipeById = async (req, res) => {
 
 const createRecipe = async (req, res) => {
   try {
-    const data = {
+    const recipe = await Recipe.create({
       ...req.body,
-      ingredients: req.body.ingredients
-        ? req.body.ingredients.split(',').map((i) => i.trim())
-        : [],
-      prepTime: Number(req.body.prepTime),
-      servings: Number(req.body.servings),
-    }
+      owner: req.user.id,
+    })
 
-    const recipe = new Recipe(data)
-    await recipe.save()
-
-    return res.status(201).json(recipe)
+    res.status(201).json(recipe)
   } catch (error) {
-    console.error(error)
-    return res.status(400).json({
+    res.status(400).json({
       message: 'Error creando receta',
       error: error.message,
     })
@@ -49,17 +41,21 @@ const createRecipe = async (req, res) => {
 
 const updateRecipe = async (req, res) => {
   try {
-    const recipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    })
+    const recipe = await Recipe.findById(req.params.id)
 
     if (!recipe) {
       return res.status(404).json({ message: 'Receta no encontrada' })
     }
 
+    if (recipe.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'No autorizado' })
+    }
+
+    Object.assign(recipe, req.body)
+    await recipe.save()
+
     res.json(recipe)
-  } catch {
+  } catch (error) {
     res.status(400).json({ message: 'Error actualizando receta' })
   }
 }
