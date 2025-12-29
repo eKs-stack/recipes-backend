@@ -70,7 +70,7 @@ const updateRecipe = async (req, res) => {
     const recipe = await Recipe.findOneAndUpdate(
       { _id: req.params.id, owner: req.user.id },
       updates,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     )
 
     if (!recipe) {

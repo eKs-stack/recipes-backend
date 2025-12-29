@@ -39,6 +39,7 @@ Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
 ```env
 PORT=3000
 MONGO_URI=tu_uri_de_mongodb_atlas
+JWT_SECRET=tu_secreto_jwt
 ```
 
 Ejemplo:
@@ -46,6 +47,7 @@ Ejemplo:
 ```env
 PORT=3000
 MONGO_URI=mongodb+srv://usuario:password@cluster0.xxxxx.mongodb.net/recipes
+JWT_SECRET=un_secreto_largo_y_unico
 ```
 
 ### 4. Ejecutar el servidor

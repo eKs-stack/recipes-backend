@@ -16,7 +16,9 @@ const register = async (req, res) => {
     if (existsByEmail) {
       return res.status(400).json({ message: 'Usuario ya existe' })
     }
-    const existsByUsername = await User.findOne({ username: normalizedUsername })
+    const existsByUsername = await User.findOne({
+      username: normalizedUsername,
+    })
     if (existsByUsername) {
       return res.status(400).json({ message: 'Usuario ya existe' })
     }
@@ -73,9 +75,7 @@ const login = async (req, res) => {
 
     const isEmail = identifier.includes('@')
     const user = await User.findOne(
-      isEmail
-        ? { email: identifier.toLowerCase() }
-        : { username: identifier },
+      isEmail ? { email: identifier.toLowerCase() } : { username: identifier },
     )
     if (!user) {
       return res.status(400).json({ message: 'Credenciales inválidas' })
