@@ -62,12 +62,17 @@ const updateRecipe = async (req, res) => {
 
 const deleteRecipe = async (req, res) => {
   try {
-    const recipe = await Recipe.findByIdAndDelete(req.params.id)
+    const recipe = await Recipe.findById(req.params.id)
 
     if (!recipe) {
       return res.status(404).json({ message: 'Receta no encontrada' })
     }
 
+    if (recipe.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'No autorizado' })
+    }
+
+    await recipe.deleteOne()
     res.json({ message: 'Receta eliminada' })
   } catch {
     res.status(400).json({ message: 'Error eliminando receta' })
