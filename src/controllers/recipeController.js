@@ -20,7 +20,6 @@ const buildRecipeUpdate = (body) => {
   }, {})
 }
 
-// 🌍 públicas
 const getAllRecipes = async (req, res) => {
   try {
     const recipes = await Recipe.find().populate('owner', 'username')
@@ -42,7 +41,6 @@ const getRecipeById = async (req, res) => {
   }
 }
 
-// 🔐 privadas
 const getMyRecipes = async (req, res) => {
   try {
     const recipes = await Recipe.find({ owner: req.user.id })
@@ -67,8 +65,9 @@ const createRecipe = async (req, res) => {
 const updateRecipe = async (req, res) => {
   try {
     const updates = buildRecipeUpdate(req.body)
+    const isAdmin = req.user?.role === 'admin'
     const recipe = await Recipe.findOneAndUpdate(
-      { _id: req.params.id, owner: req.user.id },
+      isAdmin ? { _id: req.params.id } : { _id: req.params.id, owner: req.user.id },
       updates,
       { new: true, runValidators: true },
     )
@@ -85,9 +84,10 @@ const updateRecipe = async (req, res) => {
 
 const deleteRecipe = async (req, res) => {
   try {
+    const isAdmin = req.user?.role === 'admin'
     const recipe = await Recipe.findOneAndDelete({
       _id: req.params.id,
-      owner: req.user.id,
+      ...(isAdmin ? {} : { owner: req.user.id }),
     })
 
     if (!recipe) {

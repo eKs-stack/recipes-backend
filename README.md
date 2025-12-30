@@ -19,6 +19,7 @@ API REST para gestionar recetas con Node.js, Express y MongoDB. Incluye autentic
 - Listado publico y detalle por ID
 - Listado de recetas propias (`/api/recipes/mine`)
 - Validaciones basicas via Mongoose
+- Roles de usuario (`user`/`admin`) para operaciones administrativas
 
 ---
 
@@ -194,6 +195,16 @@ Ejemplo de body (JSON):
 ```
 
 El campo `owner` se asigna automaticamente desde el usuario autenticado.
+
+---
+
+## Roles
+
+El modelo de usuario incluye el campo `role` con valores `user` o `admin`.
+
+- Por defecto, los usuarios nuevos son `user`.
+- Los `admin` pueden actualizar o eliminar cualquier receta.
+- Para promover un usuario a `admin`, actualiza el campo `role` en la base de datos.
 
 ---
 

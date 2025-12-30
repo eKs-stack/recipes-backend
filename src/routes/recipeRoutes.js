@@ -11,14 +11,11 @@ const {
   deleteRecipe,
 } = require('../controllers/recipeController')
 
-// 🔐 privadas
 router.get('/mine', auth, getMyRecipes)
 
-// 🌍 públicas
 router.get('/', getAllRecipes)
 router.get('/:id', getRecipeById)
 
-// 🔐 CRUD protegido
 router.post('/', auth, createRecipe)
 router.put('/:id', auth, updateRecipe)
 router.delete('/:id', auth, deleteRecipe)
