@@ -67,7 +67,9 @@ const updateRecipe = async (req, res) => {
     const updates = buildRecipeUpdate(req.body)
     const isAdmin = req.user?.role === 'admin'
     const recipe = await Recipe.findOneAndUpdate(
-      isAdmin ? { _id: req.params.id } : { _id: req.params.id, owner: req.user.id },
+      isAdmin
+        ? { _id: req.params.id }
+        : { _id: req.params.id, owner: req.user.id },
       updates,
       { new: true, runValidators: true },
     )

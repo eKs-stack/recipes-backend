@@ -61,6 +61,7 @@ JWT_SECRET=tu_secreto_jwt
 ```
 
 Notas:
+
 - `JWT_SECRET` es obligatorio para login/registro.
 - `PORT` es opcional en produccion (el proveedor puede inyectarlo).
 
@@ -163,6 +164,7 @@ DELETE /api/recipes/:id
 ```
 
 Notas:
+
 - `PUT` y `DELETE` solo permiten modificar/eliminar recetas del usuario autenticado.
 
 ---
@@ -170,6 +172,7 @@ Notas:
 ## Modelo de receta
 
 Campos requeridos:
+
 - `title` (string)
 - `description` (string)
 - `ingredients` (array de strings)
@@ -230,6 +233,7 @@ Se incluye una coleccion lista para importar:
 - `recipes-backend.postman_collection.json`
 
 Variables incluidas:
+
 - `baseUrl` (por defecto `http://localhost:3000/api`)
 - `token` (se setea al hacer login)
 - `recipeId` (se setea al crear receta)
