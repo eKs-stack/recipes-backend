@@ -4,6 +4,14 @@ API REST para gestionar recetas con Node.js, Express y MongoDB. Incluye autentic
 
 ---
 
+## Enlaces de entrega
+
+- Repo: https://github.com/eKs-stack/recipes-backend
+- Deploy (Render): https://recipes-backend-d7dm.onrender.com
+- Postman: [recipes-backend.postman_collection.json](recipes-backend.postman_collection.json)
+
+---
+
 ## Funcionalidades
 
 - Registro y login con JWT (expira en 7 dias)
@@ -186,6 +194,36 @@ Ejemplo de body (JSON):
 ```
 
 El campo `owner` se asigna automaticamente desde el usuario autenticado.
+
+---
+
+## Deploy (Render)
+
+1. Crea un **Web Service** en Render y conecta el repo.
+2. Configura:
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+3. Variables de entorno (Settings > Environment):
+   - `MONGO_URI`
+   - `JWT_SECRET`
+   - `PORT` (opcional, Render lo inyecta)
+4. Una vez desplegado, copia la URL y usala en el frontend como:
+   - `VITE_API_URL=https://<tu-servicio>.onrender.com/api`
+
+---
+
+## Postman
+
+Se incluye una coleccion lista para importar:
+
+- `recipes-backend.postman_collection.json`
+
+Variables incluidas:
+- `baseUrl` (por defecto `http://localhost:3000/api`)
+- `token` (se setea al hacer login)
+- `recipeId` (se setea al crear receta)
+
+Importa la coleccion en Postman y ajusta `baseUrl` si es necesario.
 
 ---
 
