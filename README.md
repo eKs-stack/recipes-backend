@@ -1,23 +1,32 @@
 # Recipes API
 
-API REST para gestionar recetas desarrollada con Node.js, Express y MongoDB Atlas.
-
-Este backend forma parte de un proyecto final Fullstack. Expone endpoints REST que serán consumidos por un frontend en React.
+API REST para gestionar recetas con Node.js, Express y MongoDB. Incluye autenticacion con JWT y endpoints publicos/protegidos para recetas.
 
 ---
 
-## Tecnologías utilizadas
+## Funcionalidades
+
+- Registro y login con JWT (expira en 7 dias)
+- CRUD de recetas protegido por token
+- Listado publico y detalle por ID
+- Listado de recetas propias (`/api/recipes/mine`)
+- Validaciones basicas via Mongoose
+
+---
+
+## Tecnologias utilizadas
 
 - Node.js
 - Express
-- MongoDB Atlas
-- Mongoose
-- ESLint
-- Prettier
+- MongoDB + Mongoose
+- JWT (`jsonwebtoken`)
+- Bcrypt (`bcryptjs`)
+- CORS
+- ESLint + Prettier
 
 ---
 
-## Instalación y ejecución
+## Instalacion y ejecucion
 
 ### 1. Clonar el repositorio
 
@@ -34,21 +43,17 @@ npm install
 
 ### 3. Variables de entorno
 
-Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
+Crea un archivo `.env` en la raiz del proyecto con el siguiente contenido:
 
 ```env
 PORT=3000
-MONGO_URI=tu_uri_de_mongodb_atlas
+MONGO_URI=tu_uri_de_mongodb
 JWT_SECRET=tu_secreto_jwt
 ```
 
-Ejemplo:
-
-```env
-PORT=3000
-MONGO_URI=mongodb+srv://usuario:password@cluster0.xxxxx.mongodb.net/recipes
-JWT_SECRET=un_secreto_largo_y_unico
-```
+Notas:
+- `JWT_SECRET` es obligatorio para login/registro.
+- `PORT` es opcional en produccion (el proveedor puede inyectarlo).
 
 ### 4. Ejecutar el servidor
 
@@ -58,7 +63,7 @@ Modo desarrollo:
 npm run dev
 ```
 
-Modo producción:
+Modo produccion:
 
 ```bash
 npm start
@@ -72,58 +77,115 @@ http://localhost:3000
 
 ---
 
-## Endpoints de la API
+## Autenticacion
 
-### Obtener todas las recetas
-
-```text
-GET /api/recipes
-```
-
-### Obtener una receta por ID
+### Registro
 
 ```text
-GET /api/recipes/:id
-```
-
-### Crear una receta
-
-```text
-POST /api/recipes
+POST /api/auth/register
 ```
 
 Body (JSON):
 
 ```json
 {
-  "title": "Pasta simple",
-  "description": "Una receta rápida",
-  "ingredients": ["pasta", "sal", "aceite"],
-  "steps": "Hervir la pasta y servir",
-  "prepTime": 15
+  "username": "aleks",
+  "email": "aleks@email.com",
+  "password": "tu_password"
 }
 ```
 
-### Actualizar una receta
+### Login
 
 ```text
-PUT /api/recipes/:id
+POST /api/auth/login
 ```
 
-Body de ejemplo:
+Body (JSON):
 
 ```json
 {
-  "title": "Pasta mejorada",
-  "prepTime": 20
+  "email": "aleks@email.com",
+  "password": "tu_password"
 }
 ```
 
-### Eliminar una receta
+Tambien se puede iniciar sesion con `username` en lugar de `email`.
+
+### Uso del token
+
+Incluye el token en el header:
 
 ```text
+Authorization: Bearer <token>
+```
+
+---
+
+## Endpoints de la API
+
+### Salud
+
+```text
+GET /
+```
+
+### Auth
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+```
+
+### Recetas publicas
+
+```text
+GET /api/recipes
+GET /api/recipes/:id
+```
+
+### Recetas protegidas (requieren token)
+
+```text
+GET /api/recipes/mine
+POST /api/recipes
+PUT /api/recipes/:id
 DELETE /api/recipes/:id
 ```
+
+Notas:
+- `PUT` y `DELETE` solo permiten modificar/eliminar recetas del usuario autenticado.
+
+---
+
+## Modelo de receta
+
+Campos requeridos:
+- `title` (string)
+- `description` (string)
+- `ingredients` (array de strings)
+- `steps` (string)
+- `prepTime` (number)
+- `category` (string)
+- `difficulty` ("Fácil", "Media" o "Difícil")
+- `servings` (number)
+
+Ejemplo de body (JSON):
+
+```json
+{
+  "title": "Pasta simple",
+  "description": "Una receta rapida",
+  "ingredients": ["pasta", "sal", "aceite"],
+  "steps": "Hervir la pasta y servir",
+  "prepTime": 15,
+  "category": "Italiana",
+  "difficulty": "Fácil",
+  "servings": 2
+}
+```
+
+El campo `owner` se asigna automaticamente desde el usuario autenticado.
 
 ---
 
@@ -131,21 +193,9 @@ DELETE /api/recipes/:id
 
 ```bash
 npm run dev      # Servidor con nodemon
-npm start        # Servidor en producción
+npm start        # Servidor en produccion
 npm run lint     # Ejecuta ESLint
-npm run format   # Formatea el código con Prettier
-```
-
----
-
-## Documentación con Postman
-
-El repositorio incluye una colección de Postman con todos los endpoints documentados y probados.
-
-Archivo incluido:
-
-```text
-postman_collection.json
+npm run format   # Formatea el codigo con Prettier
 ```
 
 ---
@@ -153,11 +203,11 @@ postman_collection.json
 ## Estado del proyecto
 
 - CRUD completo de recetas
-- Conexión a MongoDB Atlas
-- Patrón MVC aplicado
-- API documentada con Postman
-- Código validado con ESLint y Prettier
-- Backend listo para despliegue en Render
+- Autenticacion con JWT
+- Conexión a MongoDB
+- Patron MVC aplicado
+- Codigo validado con ESLint y Prettier
+- Backend listo para despliegue
 
 ---
 
