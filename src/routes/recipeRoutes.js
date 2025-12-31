@@ -1,6 +1,11 @@
 const express = require('express')
 const auth = require('../middlewares/auth')
+const validate = require('../middlewares/validate')
 const router = express.Router()
+const {
+  createRecipeValidation,
+  updateRecipeValidation,
+} = require('../validators/recipeValidators')
 
 const {
   getAllRecipes,
@@ -16,8 +21,8 @@ router.get('/mine', auth, getMyRecipes)
 router.get('/', getAllRecipes)
 router.get('/:id', getRecipeById)
 
-router.post('/', auth, createRecipe)
-router.put('/:id', auth, updateRecipe)
+router.post('/', auth, createRecipeValidation, validate, createRecipe)
+router.put('/:id', auth, updateRecipeValidation, validate, updateRecipe)
 router.delete('/:id', auth, deleteRecipe)
 
 module.exports = router

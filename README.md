@@ -31,6 +31,9 @@ API REST para gestionar recetas con Node.js, Express y MongoDB. Incluye autentic
 - JWT (`jsonwebtoken`)
 - Bcrypt (`bcryptjs`)
 - CORS
+- Helmet
+- Express Rate Limit
+- Express Validator
 - ESLint + Prettier
 
 ---
@@ -58,12 +61,14 @@ Crea un archivo `.env` en la raiz del proyecto con el siguiente contenido:
 PORT=3000
 MONGO_URI=tu_uri_de_mongodb
 JWT_SECRET=tu_secreto_jwt
+CORS_ORIGINS=https://guardatureceta.com,https://www.guardatureceta.com
 ```
 
 Notas:
 
 - `JWT_SECRET` es obligatorio para login/registro.
 - `PORT` es opcional en produccion (el proveedor puede inyectarlo).
+- `CORS_ORIGINS` es opcional. Si no se define, se usan valores por defecto.
 
 ### 4. Ejecutar el servidor
 
@@ -221,6 +226,7 @@ El modelo de usuario incluye el campo `role` con valores `user` o `admin`.
    - `MONGO_URI`
    - `JWT_SECRET`
    - `PORT` (opcional, Render lo inyecta)
+   - `CORS_ORIGINS` (opcional, separado por comas)
 4. Una vez desplegado, copia la URL y usala en el frontend como:
    - `VITE_API_URL=https://<tu-servicio>.onrender.com/api`
 
