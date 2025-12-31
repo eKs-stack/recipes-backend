@@ -25,10 +25,7 @@ app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true)
-      if (
-        originAllowlist.includes(origin) ||
-        origin.endsWith('.vercel.app')
-      ) {
+      if (originAllowlist.includes(origin) || origin.endsWith('.vercel.app')) {
         return callback(null, true)
       }
       return callback(null, false)

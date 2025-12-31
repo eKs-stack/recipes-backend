@@ -13,9 +13,7 @@ const createRecipeValidation = [
     .trim()
     .isLength({ min: 3, max: 500 })
     .withMessage('Descripción inválida'),
-  body('ingredients')
-    .isArray({ min: 1 })
-    .withMessage('Ingredientes inválidos'),
+  body('ingredients').isArray({ min: 1 }).withMessage('Ingredientes inválidos'),
   body('ingredients.*')
     .isString()
     .trim()
@@ -26,17 +24,13 @@ const createRecipeValidation = [
     .trim()
     .isLength({ min: 3, max: 5000 })
     .withMessage('Pasos inválidos'),
-  body('prepTime')
-    .isInt({ min: 1, max: 1000 })
-    .withMessage('Tiempo inválido'),
+  body('prepTime').isInt({ min: 1, max: 1000 }).withMessage('Tiempo inválido'),
   body('category')
     .isString()
     .trim()
     .isLength({ min: 2, max: 40 })
     .withMessage('Categoría inválida'),
-  body('difficulty')
-    .isIn(difficultyValues)
-    .withMessage('Dificultad inválida'),
+  body('difficulty').isIn(difficultyValues).withMessage('Dificultad inválida'),
   body('servings')
     .isInt({ min: 1, max: 200 })
     .withMessage('Porciones inválidas'),
