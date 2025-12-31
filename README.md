@@ -92,6 +92,25 @@ http://localhost:3000
 
 ---
 
+## Frontend local
+
+1. En el repo `recipes-frontend`, crea `.env`:
+
+```env
+VITE_API_URL=http://localhost:3000/api
+```
+
+2. Instala y ejecuta:
+
+```bash
+npm install
+npm run dev
+```
+
+App en `http://localhost:5173`.
+
+Nota: si cambias el puerto del frontend, agrega ese origen en `CORS_ORIGINS`.
+
 ## Autenticacion
 
 ### Registro
