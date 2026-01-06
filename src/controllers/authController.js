@@ -111,4 +111,21 @@ const login = async (req, res) => {
   }
 }
 
-module.exports = { register, login }
+const me = (req, res) => {
+  const user = req.user
+
+  if (!user) {
+    return res.status(401).json({ message: 'Usuario no encontrado' })
+  }
+
+  res.json({
+    user: {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role || 'user',
+    },
+  })
+}
+
+module.exports = { register, login, me }

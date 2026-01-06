@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "seed:recipes": "node src/seedRecipes.js",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

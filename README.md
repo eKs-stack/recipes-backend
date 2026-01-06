@@ -92,25 +92,6 @@ http://localhost:3000
 
 ---
 
-## Frontend local
-
-1. En el repo `recipes-frontend`, crea `.env`:
-
-```env
-VITE_API_URL=http://localhost:3000/api
-```
-
-2. Instala y ejecuta:
-
-```bash
-npm install
-npm run dev
-```
-
-App en `http://localhost:5173`.
-
-Nota: si cambias el puerto del frontend, agrega ese origen en `CORS_ORIGINS`.
-
 ## Autenticacion
 
 ### Registro
@@ -243,8 +224,6 @@ El modelo de usuario incluye el campo `role` con valores `user` o `admin`.
    - `JWT_SECRET`
    - `CORS_ORIGINS` (opcional, separado por comas)
 3. Despliega el proyecto (Vercel detecta `api/index.js`).
-4. Una vez desplegado, copia la URL y usala en el frontend como:
-   - `VITE_API_URL=https://recipes-backend-gilt.vercel.app/api`
 
 ---
 
@@ -269,9 +248,33 @@ Importa la coleccion en Postman y ajusta `baseUrl` si es necesario.
 ```bash
 npm run dev      # Servidor con nodemon
 npm start        # Servidor en produccion
+npm run seed:recipes # Inserta recetas de ejemplo en local
 npm run lint     # Ejecuta ESLint
 npm run format   # Formatea el codigo con Prettier
 ```
+
+---
+
+## Seed local de recetas
+
+Para poblar recetas de ejemplo en una base local:
+
+```bash
+npm run seed:recipes
+```
+
+Variables opcionales:
+
+```env
+SEED_USER_EMAIL=demo@local.dev
+SEED_USER_USERNAME=demo
+SEED_USER_PASSWORD=demo1234
+SEED_USER_ROLE=admin
+SEED_COUNT=8
+SEED_RESET=true
+SEED_USER_ID=
+```
+
 
 ---
 
