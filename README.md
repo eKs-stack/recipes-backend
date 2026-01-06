@@ -66,9 +66,12 @@ CORS_ORIGINS=https://guardatureceta.com,https://www.guardatureceta.com
 
 Notas:
 
+- `MONGO_URI` puede ser una cadena local o de MongoDB Atlas.
 - `JWT_SECRET` es obligatorio para login/registro.
 - `PORT` es opcional en produccion (el proveedor puede inyectarlo).
 - `CORS_ORIGINS` es opcional. Si no se define, se usan valores por defecto.
+
+Si usas Atlas: crea el cluster, agrega un usuario de base de datos y copia la URI de conexión en `MONGO_URI`.
 
 ### 4. Ejecutar el servidor
 
@@ -170,7 +173,7 @@ DELETE /api/recipes/:id
 
 Notas:
 
-- `PUT` y `DELETE` solo permiten modificar/eliminar recetas del usuario autenticado.
+- `PUT` y `DELETE` permiten modificar/eliminar recetas del usuario autenticado; si es `admin`, puede operar sobre cualquier receta.
 
 ---
 
