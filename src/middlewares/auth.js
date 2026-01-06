@@ -3,6 +3,7 @@ const User = require('../models/User')
 
 const auth = async (req, res, next) => {
   try {
+    // espera un Bearer token en el header auth
     const header = req.headers.authorization
 
     if (!header || !header.startsWith('Bearer ')) {

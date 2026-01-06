@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+// Cachea la conexión para evitar múltiples sockets en dev/serverless.
 let cached = global.mongoose
 
 if (!cached) {

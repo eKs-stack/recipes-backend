@@ -1,6 +1,7 @@
 const Recipe = require('../models/Recipe')
 
 const buildRecipeUpdate = (body) => {
+  // Whitelist de campos para evitar updates que no queremos permitir
   const allowedFields = [
     'title',
     'description',

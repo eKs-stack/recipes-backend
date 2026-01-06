@@ -112,8 +112,7 @@ const sampleRecipes = [
       'miel',
       'leche',
     ],
-    steps:
-      'Licuar todo hasta lograr una textura cremosa.\nServir frío.',
+    steps: 'Licuar todo hasta lograr una textura cremosa.\nServir frío.',
     prepTime: 8,
     category: 'Bebida',
     difficulty: 'Fácil',
@@ -158,13 +157,7 @@ const sampleRecipes = [
   {
     title: 'Tortilla de patatas rápida',
     description: 'Versión simple con menos aceite.',
-    ingredients: [
-      'patatas',
-      'huevos',
-      'cebolla',
-      'aceite de oliva',
-      'sal',
-    ],
+    ingredients: ['patatas', 'huevos', 'cebolla', 'aceite de oliva', 'sal'],
     steps:
       'Cocinar las patatas en sartén con aceite.\nAgregar cebolla.\nMezclar con huevo batido y cuajar.',
     prepTime: 20,
@@ -193,13 +186,7 @@ const sampleRecipes = [
   {
     title: 'Granola casera',
     description: 'Mezcla crujiente para yogur o leche.',
-    ingredients: [
-      'avena',
-      'almendras',
-      'miel',
-      'canela',
-      'aceite de coco',
-    ],
+    ingredients: ['avena', 'almendras', 'miel', 'canela', 'aceite de coco'],
     steps:
       'Mezclar avena con miel, canela y aceite.\nHornear 20-25 minutos.\nEnfriar y guardar.',
     prepTime: 35,
@@ -268,6 +255,7 @@ const seedRecipes = async () => {
   const recipeLimit = resolveSeedCount()
   const seedBatch = sampleRecipes.slice(0, recipeLimit)
 
+  // Limpia solo las recetas del usuario seed si se solicita
   if (SEED_RESET) {
     await Recipe.deleteMany({ owner: user._id })
   }
@@ -284,6 +272,7 @@ const seedRecipes = async () => {
   )
   const existingTitles = new Set(existing.map((recipe) => recipe.title))
 
+  // evita duplicar recetas si ya existen para el mismo user
   const toInsert = seedBatch
     .filter((recipe) => !existingTitles.has(recipe.title))
     .map((recipe) => ({

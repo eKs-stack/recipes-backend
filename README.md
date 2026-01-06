@@ -275,7 +275,6 @@ SEED_RESET=true
 SEED_USER_ID=
 ```
 
-
 ---
 
 ## Estado del proyecto
