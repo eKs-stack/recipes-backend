@@ -139,7 +139,7 @@ Authorization: Bearer <token>
 
 ## Endpoints de la API
 
-### Salud
+### Estado
 
 ```text
 GET /
