@@ -1,13 +1,17 @@
 require('./config/env')
 const bcrypt = require('bcryptjs')
+const crypto = require('crypto')
 const mongoose = require('mongoose')
 const connectDB = require('./config/db')
 const User = require('./models/User')
 const Recipe = require('./models/Recipe')
 
+const generateSeedPassword = () => crypto.randomBytes(12).toString('base64url')
+
 const SEED_USER_EMAIL = process.env.SEED_USER_EMAIL || 'demo@local.dev'
 const SEED_USER_USERNAME = process.env.SEED_USER_USERNAME || 'demo'
-const SEED_USER_PASSWORD = process.env.SEED_USER_PASSWORD || 'demo1234'
+const SEED_USER_PASSWORD =
+  process.env.SEED_USER_PASSWORD || generateSeedPassword()
 const SEED_USER_ROLE = process.env.SEED_USER_ROLE || 'admin'
 const SEED_RESET = process.env.SEED_RESET === 'true'
 const SEED_COUNT = Number.parseInt(process.env.SEED_COUNT, 10)
@@ -204,14 +208,21 @@ const resolveSeedCount = () => {
 }
 
 const findOrCreateUser = async () => {
+  const hashedPassword = await bcrypt.hash(SEED_USER_PASSWORD, 10)
+
+  const updateExistingUser = async (user) => {
+    user.password = hashedPassword
+    if (user.role !== SEED_USER_ROLE) {
+      user.role = SEED_USER_ROLE
+    }
+    await user.save()
+    return user
+  }
+
   if (SEED_USER_ID) {
     const existingById = await User.findById(SEED_USER_ID)
     if (existingById) {
-      if (existingById.role !== SEED_USER_ROLE) {
-        existingById.role = SEED_USER_ROLE
-        await existingById.save()
-      }
-      return existingById
+      return updateExistingUser(existingById)
     }
   }
 
@@ -220,25 +231,15 @@ const findOrCreateUser = async () => {
 
   const existingByEmail = await User.findOne({ email: normalizedEmail })
   if (existingByEmail) {
-    if (existingByEmail.role !== SEED_USER_ROLE) {
-      existingByEmail.role = SEED_USER_ROLE
-      await existingByEmail.save()
-    }
-    return existingByEmail
+    return updateExistingUser(existingByEmail)
   }
 
   const existingByUsername = await User.findOne({
     username: normalizedUsername,
   })
   if (existingByUsername) {
-    if (existingByUsername.role !== SEED_USER_ROLE) {
-      existingByUsername.role = SEED_USER_ROLE
-      await existingByUsername.save()
-    }
-    return existingByUsername
+    return updateExistingUser(existingByUsername)
   }
-
-  const hashedPassword = await bcrypt.hash(SEED_USER_PASSWORD, 10)
 
   return User.create({
     username: normalizedUsername,
@@ -288,6 +289,7 @@ const seedRecipes = async () => {
   await Recipe.insertMany(toInsert)
 
   console.log(`[seed] Usuario: ${user.email} (${user._id})`)
+  console.log(`[seed] Password: ${SEED_USER_PASSWORD}`)
   console.log(`[seed] Recetas insertadas: ${toInsert.length}`)
 }
 

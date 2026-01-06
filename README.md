@@ -61,7 +61,7 @@ Crea un archivo `.env` en la raiz del proyecto con el siguiente contenido:
 PORT=3000
 MONGO_URI=tu_uri_de_mongodb
 JWT_SECRET=tu_secreto_jwt
-CORS_ORIGINS=https://guardatureceta.com,https://www.guardatureceta.com
+CORS_ORIGINS=http://localhost:5173,https://guardatureceta.com,https://www.guardatureceta.com
 ```
 
 Notas:
@@ -69,7 +69,7 @@ Notas:
 - `MONGO_URI` puede ser una cadena local o de MongoDB Atlas.
 - `JWT_SECRET` es obligatorio para login/registro.
 - `PORT` es opcional en produccion (el proveedor puede inyectarlo).
-- `CORS_ORIGINS` es opcional. Si no se define, se usan valores por defecto.
+- `CORS_ORIGINS` es opcional. Si se define, reemplaza la lista por defecto; incluye `http://localhost:5173` para desarrollo local.
 
 Si usas Atlas: crea el cluster, agrega un usuario de base de datos y copia la URI de conexión en `MONGO_URI`.
 
