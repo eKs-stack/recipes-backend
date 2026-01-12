@@ -6,6 +6,18 @@
   },
   "item": [
     {
+      "name": "Status",
+      "item": [
+        {
+          "name": "Get API status",
+          "request": {
+            "method": "GET",
+            "url": "{{rootUrl}}/"
+          }
+        }
+      ]
+    },
+    {
       "name": "Auth",
       "item": [
         {
@@ -54,6 +66,19 @@
               "raw": "{\n  \"email\": \"aleks@email.com\",\n  \"password\": \"tu_password\"\n}"
             },
             "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me"
           }
         }
       ]
@@ -164,6 +189,10 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "rootUrl",
+      "value": "http://localhost:3000"
     },
     {
       "key": "token",
