@@ -58,7 +58,7 @@ const createRecipe = async (req, res) => {
       owner: req.user.id,
     })
     res.status(201).json(recipe)
-  } catch (error) {
+  } catch {
     res.status(400).json({ message: 'Error creando receta' })
   }
 }

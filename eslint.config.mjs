@@ -1,4 +1,5 @@
 import js from '@eslint/js'
+import globals from 'globals'
 import prettierPlugin from 'eslint-plugin-prettier'
 
 export default [
@@ -7,9 +8,7 @@ export default [
     languageOptions: {
       ecmaVersion: 2021,
       sourceType: 'commonjs',
-    },
-    env: {
-      node: true,
+      globals: globals.node,
     },
     plugins: {
       prettier: prettierPlugin,
