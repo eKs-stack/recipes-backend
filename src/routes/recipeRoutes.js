@@ -11,12 +11,16 @@ const {
   getAllRecipes,
   getRecipeById,
   getMyRecipes,
+  getFavoriteRecipes,
+  toggleFavoriteRecipe,
   createRecipe,
   updateRecipe,
   deleteRecipe,
 } = require('../controllers/recipeController')
 
 router.get('/mine', auth, getMyRecipes)
+router.get('/favorites', auth, getFavoriteRecipes)
+router.post('/:id/favorite', auth, toggleFavoriteRecipe)
 
 router.get('/', getAllRecipes)
 router.get('/:id', getRecipeById)

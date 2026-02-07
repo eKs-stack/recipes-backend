@@ -1,4 +1,5 @@
 const Recipe = require('../models/Recipe')
+const User = require('../models/User')
 
 const buildRecipeUpdate = (body) => {
   // Whitelist de campos para evitar updates que no queremos permitir
@@ -48,6 +49,51 @@ const getMyRecipes = async (req, res) => {
     res.json(recipes)
   } catch {
     res.status(500).json({ message: 'Error obteniendo recetas' })
+  }
+}
+
+const getFavoriteRecipes = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate({
+      path: 'favoriteRecipes',
+      populate: { path: 'owner', select: 'username' },
+    })
+
+    if (!user) {
+      return res.status(401).json({ message: 'Usuario no encontrado' })
+    }
+
+    res.json(user.favoriteRecipes || [])
+  } catch {
+    res.status(500).json({ message: 'Error obteniendo favoritos' })
+  }
+}
+
+const toggleFavoriteRecipe = async (req, res) => {
+  try {
+    const recipeId = req.params.id
+    const recipe = await Recipe.findById(recipeId)
+    if (!recipe) {
+      return res.status(404).json({ message: 'Receta no encontrada' })
+    }
+
+    const user = await User.findById(req.user.id).select('favoriteRecipes')
+    if (!user) {
+      return res.status(401).json({ message: 'Usuario no encontrado' })
+    }
+
+    const favoriteRecipes = user.favoriteRecipes || []
+    const isFavorite = favoriteRecipes.some(
+      (favoriteId) => favoriteId.toString() === recipeId,
+    )
+
+    await User.findByIdAndUpdate(req.user.id, {
+      [isFavorite ? '$pull' : '$addToSet']: { favoriteRecipes: recipeId },
+    })
+
+    res.json({ isFavorite: !isFavorite })
+  } catch {
+    res.status(400).json({ message: 'ID inválido' })
   }
 }
 
@@ -107,6 +153,8 @@ module.exports = {
   getAllRecipes,
   getRecipeById,
   getMyRecipes,
+  getFavoriteRecipes,
+  toggleFavoriteRecipe,
   createRecipe,
   updateRecipe,
   deleteRecipe,
