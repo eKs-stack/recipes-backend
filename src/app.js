@@ -10,6 +10,9 @@ const authRoutes = require('./routes/authRoutes')
 
 const app = express()
 
+// Necesario en plataformas con proxy (Vercel/Render) para obtener IP real.
+app.set('trust proxy', 1)
+
 app.use(helmet())
 const allowedOrigins = (process.env.CORS_ORIGINS || '')
   .split(',')
@@ -45,7 +48,9 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 })
 
-app.use('/api/auth', authLimiter, authRoutes)
+app.use('/api/auth/login', authLimiter)
+app.use('/api/auth/register', authLimiter)
+app.use('/api/auth', authRoutes)
 app.use('/api/recipes', recipeRoutes)
 
 app.get('/', (req, res) => {
