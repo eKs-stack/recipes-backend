@@ -1,272 +1,115 @@
 # Recipes API
 
-API REST para gestionar recetas con Node.js, Express y MongoDB. Incluye autenticacion con JWT y endpoints publicos/protegidos para recetas.
+API REST para gestionar recetas con Node.js, Express y MongoDB.
 
----
-
-## Enlaces de entrega
+## Enlaces
 
 - Repo: [https://github.com/eKs-stack/recipes-backend](https://github.com/eKs-stack/recipes-backend)
-- Deploy (Vercel): [https://recipes-backend-gilt.vercel.app](https://recipes-backend-gilt.vercel.app)
-- Postman: [recipes-backend.postman_collection.json](recipes-backend.postman_collection.json)
+- Deploy: [https://recipes-backend-gilt.vercel.app](https://recipes-backend-gilt.vercel.app)
+- Postman: `recipes-backend.postman_collection.json`
 
----
+## Stack
 
-## Funcionalidades
-
-- Registro y login con JWT (expira en 7 dias)
-- CRUD de recetas protegido por token
-- Listado publico y detalle por ID
-- Listado de recetas propias (`/api/recipes/mine`)
-- Validaciones basicas via Mongoose
-- Roles de usuario (`user`/`admin`) para operaciones administrativas
-
----
-
-## Tecnologias utilizadas
-
-- Node.js
-- Express
+- Node.js + Express
 - MongoDB + Mongoose
 - JWT (`jsonwebtoken`)
 - Bcrypt (`bcryptjs`)
-- CORS
 - Helmet
+- CORS
 - Express Rate Limit
 - Express Validator
-- ESLint + Prettier
 
----
+## Qué hace
 
-## Instalacion y ejecucion
+- Registro/login de usuarios.
+- Sesion por cookie `httpOnly` con JWT (7 dias).
+- Endpoint `GET /api/auth/me` para recuperar usuario autenticado.
+- CRUD de recetas con control de permisos por `owner` y rol `admin`.
+- Favoritos persistidos por usuario en base de datos.
 
-### 1. Clonar el repositorio
+## Seguridad aplicada
+
+- `helmet` para cabeceras seguras.
+- CORS con allowlist (`CORS_ORIGINS`) y `credentials: true`.
+- Proteccion CSRF por validacion de `Origin/Referer` en metodos mutables cuando hay cookie de sesion.
+- Rate limit solo en login/registro (`/api/auth/login` y `/api/auth/register`).
+- Passwords hasheadas con `bcrypt`.
+
+## Instalacion
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone <URL_DEL_REPO>
 cd recipes-backend
-```
-
-### 2. Instalar dependencias
-
-```bash
 npm install
 ```
 
-### 3. Variables de entorno
+## Variables de entorno
 
-Crea un archivo `.env` en la raiz del proyecto con el siguiente contenido:
+Crea `/Users/aleks/Desktop/REPOS/PERSONALES/recipes-backend/.env`:
 
 ```env
 PORT=3000
-MONGO_URI=tu_uri_de_mongodb
-JWT_SECRET=tu_secreto_jwt
+MONGO_URI=mongodb://127.0.0.1:27017/recipes
+JWT_SECRET=tu_secreto
 CORS_ORIGINS=http://localhost:5173,https://guardatureceta.com,https://www.guardatureceta.com
+# opcionales
+NODE_ENV=development
+COOKIE_SAME_SITE=lax
+COOKIE_SECURE=false
 ```
 
 Notas:
 
-- `MONGO_URI` puede ser una cadena local o de MongoDB Atlas.
-- `JWT_SECRET` es obligatorio para login/registro.
-- `PORT` es opcional en produccion (el proveedor puede inyectarlo).
-- `CORS_ORIGINS` es opcional. Si se define, reemplaza la lista por defecto; incluye `http://localhost:5173` para desarrollo local.
+- En produccion cross-site, normalmente `COOKIE_SAME_SITE=none` y `COOKIE_SECURE=true`.
+- Si `CORS_ORIGINS` no se define, se usa una lista por defecto del proyecto.
 
-Si usas Atlas: crea el cluster, agrega un usuario de base de datos y copia la URI de conexión en `MONGO_URI`.
-
-### 4. Ejecutar el servidor
-
-Modo desarrollo:
+## Scripts
 
 ```bash
 npm run dev
-```
-
-Modo produccion:
-
-```bash
 npm start
+npm run seed:recipes
+npm run lint
+npm run format
 ```
 
-El servidor se ejecuta en:
-
-```text
-http://localhost:3000
-```
-
----
-
-## Autenticacion
-
-### Registro
-
-```text
-POST /api/auth/register
-```
-
-Body (JSON):
-
-```json
-{
-  "username": "aleks",
-  "email": "aleks@email.com",
-  "password": "tu_password"
-}
-```
-
-### Login
-
-```text
-POST /api/auth/login
-```
-
-Body (JSON):
-
-```json
-{
-  "email": "aleks@email.com",
-  "password": "tu_password"
-}
-```
-
-Tambien se puede iniciar sesion con `username` en lugar de `email`.
-
-### Uso del token
-
-Incluye el token en el header:
-
-```text
-Authorization: Bearer <token>
-```
-
----
-
-## Endpoints de la API
-
-### Estado
-
-```text
-GET /
-```
+## Endpoints
 
 ### Auth
 
-```text
-POST /api/auth/register
-POST /api/auth/login
-```
+- `POST /api/auth/register` (publico, validado, crea cookie de sesion)
+- `POST /api/auth/login` (publico, validado, rate-limited, crea cookie de sesion)
+- `GET /api/auth/me` (protegido, devuelve usuario actual)
+- `POST /api/auth/logout` (limpia cookie de sesion)
 
-### Recetas publicas
+### Recipes
 
-```text
-GET /api/recipes
-GET /api/recipes/:id
-```
+- `GET /api/recipes` (publico)
+- `GET /api/recipes/:id` (publico)
+- `GET /api/recipes/mine` (protegido)
+- `GET /api/recipes/favorites` (protegido)
+- `POST /api/recipes/:id/favorite` (protegido)
+- `POST /api/recipes` (protegido + validacion)
+- `PUT /api/recipes/:id` (protegido + validacion + owner/admin)
+- `DELETE /api/recipes/:id` (protegido + owner/admin)
 
-### Recetas protegidas (requieren token)
+## Sesion y autenticacion
 
-```text
-GET /api/recipes/mine
-POST /api/recipes
-PUT /api/recipes/:id
-DELETE /api/recipes/:id
-```
+- El backend firma JWT y lo envia en cookie `httpOnly`.
+- El frontend envia credenciales con `withCredentials` / `credentials: 'include'`.
+- El middleware `auth` valida token y adjunta `req.user`.
+- Compatibilidad: tambien acepta `Authorization: Bearer <token>`.
 
-Notas:
+## Seed local
 
-- `PUT` y `DELETE` permiten modificar/eliminar recetas del usuario autenticado; si es `admin`, puede operar sobre cualquier receta.
+`npm run seed:recipes` inserta recetas de ejemplo.
 
----
+Proteccion incluida:
 
-## Modelo de receta
+- Bloqueado si `NODE_ENV=production` o `VERCEL=1`.
+- Solo se fuerza con `ALLOW_SEED_IN_PROD=true`.
 
-Campos requeridos:
-
-- `title` (string)
-- `description` (string)
-- `ingredients` (array de strings)
-- `steps` (string)
-- `prepTime` (number)
-- `category` (string)
-- `difficulty` ("Fácil", "Media" o "Difícil")
-- `servings` (number)
-
-Ejemplo de body (JSON):
-
-```json
-{
-  "title": "Pasta simple",
-  "description": "Una receta rapida",
-  "ingredients": ["pasta", "sal", "aceite"],
-  "steps": "Hervir la pasta y servir",
-  "prepTime": 15,
-  "category": "Italiana",
-  "difficulty": "Fácil",
-  "servings": 2
-}
-```
-
-El campo `owner` se asigna automaticamente desde el usuario autenticado.
-
----
-
-## Roles
-
-El modelo de usuario incluye el campo `role` con valores `user` o `admin`.
-
-- Por defecto, los usuarios nuevos son `user`.
-- Los `admin` pueden actualizar o eliminar cualquier receta.
-- Para promover un usuario a `admin`, actualiza el campo `role` en la base de datos.
-
----
-
-## Deploy (Vercel)
-
-1. Crea un proyecto en Vercel e importa el repo.
-2. Variables de entorno (Settings > Environment Variables):
-   - `MONGO_URI`
-   - `JWT_SECRET`
-   - `CORS_ORIGINS` (opcional, separado por comas)
-3. Despliega el proyecto (Vercel detecta `api/index.js`).
-
----
-
-## Postman
-
-Se incluye una coleccion lista para importar:
-
-- `recipes-backend.postman_collection.json`
-
-Variables incluidas:
-
-- `baseUrl` (por defecto `http://localhost:3000/api`)
-- `token` (se setea al hacer login)
-- `recipeId` (se setea al crear receta)
-
-Importa la coleccion en Postman y ajusta `baseUrl` si es necesario.
-
----
-
-## Scripts disponibles
-
-```bash
-npm run dev      # Servidor con nodemon
-npm start        # Servidor en produccion
-npm run seed:recipes # Inserta recetas de ejemplo (bloqueado en production)
-npm run lint     # Ejecuta ESLint
-npm run format   # Formatea el codigo con Prettier
-```
-
----
-
-## Seed local de recetas
-
-Para poblar recetas de ejemplo en una base local:
-
-```bash
-npm run seed:recipes
-```
-
-Variables opcionales:
+Variables opcionales de seed:
 
 ```env
 SEED_USER_EMAIL=demo@local.dev
@@ -279,23 +122,16 @@ SEED_USER_ID=
 ALLOW_SEED_IN_PROD=false
 ```
 
-Nota:
+## Deploy en Vercel
 
-- `seed:recipes` esta bloqueado cuando `NODE_ENV=production` (o `VERCEL=1`).
-- Solo para casos excepcionales, puedes forzarlo con `ALLOW_SEED_IN_PROD=true`.
+1. Importa el repo en Vercel.
+2. Define variables: `MONGO_URI`, `JWT_SECRET`, `CORS_ORIGINS` y opcionalmente `COOKIE_SAME_SITE`, `COOKIE_SECURE`.
+3. Vercel usa `api/index.js` como entrypoint serverless.
 
----
+## Postman
 
-## Estado del proyecto
-
-- CRUD completo de recetas
-- Autenticacion con JWT
-- Conexión a MongoDB
-- Patron MVC aplicado
-- Codigo validado con ESLint y Prettier
-- Backend listo para despliegue
-
----
+- Puedes importar `recipes-backend.postman_collection.json`.
+- En flujo cookie, Postman debe conservar cookies entre requests (`/login` -> `/me`).
 
 ## Autor
 
