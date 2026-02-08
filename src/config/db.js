@@ -1,9 +1,5 @@
-/**
- * Aqui gestiono la conexion a MongoDB y reutilizo la conexion para no abrir sockets de mas.
- */
 const mongoose = require('mongoose')
 
-// Cachea la conexión para evitar múltiples sockets en dev/serverless.
 let cached = global.mongoose
 
 if (!cached) {

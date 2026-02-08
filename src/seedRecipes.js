@@ -1,6 +1,3 @@
-/**
- * Aqui preparo datos de ejemplo para poblar la base en local/dev.
- */
 require('./config/env')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
@@ -272,7 +269,6 @@ const seedRecipes = async () => {
   const recipeLimit = resolveSeedCount()
   const seedBatch = sampleRecipes.slice(0, recipeLimit)
 
-  // Limpia solo las recetas del usuario seed si se solicita
   if (SEED_RESET) {
     await Recipe.deleteMany({ owner: user._id })
   }
@@ -289,7 +285,6 @@ const seedRecipes = async () => {
   )
   const existingTitles = new Set(existing.map((recipe) => recipe.title))
 
-  // evita duplicar recetas si ya existen para el mismo user
   const toInsert = seedBatch
     .filter((recipe) => !existingTitles.has(recipe.title))
     .map((recipe) => ({

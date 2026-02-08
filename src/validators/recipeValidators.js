@@ -1,6 +1,3 @@
-/**
- * Aqui defino las reglas de validacion para crear y actualizar recetas.
- */
 const { body } = require('express-validator')
 
 const difficultyValues = ['Fácil', 'Media', 'Difícil']

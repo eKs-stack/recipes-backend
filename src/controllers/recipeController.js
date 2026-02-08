@@ -1,11 +1,7 @@
-/**
- * Aqui manejo la logica de recetas: listados, CRUD, favoritos y permisos por owner/admin.
- */
 const Recipe = require('../models/Recipe')
 const User = require('../models/User')
 
 const buildRecipeUpdate = (body) => {
-  // Whitelist de campos para evitar updates que no queremos permitir
   const allowedFields = [
     'title',
     'description',
@@ -90,7 +86,6 @@ const toggleFavoriteRecipe = async (req, res) => {
       (favoriteId) => favoriteId.toString() === recipeId,
     )
 
-    // Update atómico: agrega sin duplicar o elimina según estado actual.
     await User.findByIdAndUpdate(req.user.id, {
       [isFavorite ? '$pull' : '$addToSet']: { favoriteRecipes: recipeId },
     })
@@ -117,7 +112,6 @@ const updateRecipe = async (req, res) => {
   try {
     const updates = buildRecipeUpdate(req.body)
     const isAdmin = req.user?.role === 'admin'
-    // user solo edita lo suyo; admin puede editar cualquier receta.
     const recipe = await Recipe.findOneAndUpdate(
       isAdmin
         ? { _id: req.params.id }
@@ -139,7 +133,6 @@ const updateRecipe = async (req, res) => {
 const deleteRecipe = async (req, res) => {
   try {
     const isAdmin = req.user?.role === 'admin'
-    // Mismo criterio de permisos que en update: owner o admin.
     const recipe = await Recipe.findOneAndDelete({
       _id: req.params.id,
       ...(isAdmin ? {} : { owner: req.user.id }),

@@ -1,6 +1,3 @@
-/**
- * Aqui defino las reglas de validacion para registro e inicio de sesion.
- */
 const { body } = require('express-validator')
 
 const registerValidation = [

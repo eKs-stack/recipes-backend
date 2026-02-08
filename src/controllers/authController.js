@@ -1,6 +1,3 @@
-/**
- * Aqui manejo la autenticacion: registro, login, perfil actual y logout con cookie de sesion.
- */
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
@@ -10,7 +7,6 @@ const TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000
 
 const getAuthCookieOptions = () => {
   const isProduction = process.env.NODE_ENV === 'production'
-  // En local usamos 'lax'; en producción cross-site suele requerir 'none'.
   const sameSite =
     process.env.COOKIE_SAME_SITE || (isProduction ? 'none' : 'lax')
 
@@ -24,7 +20,6 @@ const getAuthCookieOptions = () => {
 }
 
 const getClearCookieOptions = () => {
-  // Para limpiar cookie, deben coincidir los mismos flags (excepto maxAge).
   const clearOptions = getAuthCookieOptions()
   delete clearOptions.maxAge
   return clearOptions
@@ -72,7 +67,6 @@ const register = async (req, res) => {
     })
 
     const token = signAuthToken(user._id)
-    // El navegador guarda la sesión en cookie httpOnly (no accesible desde JS).
     res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions())
 
     res.status(201).json({
@@ -132,7 +126,6 @@ const login = async (req, res) => {
     }
 
     const token = signAuthToken(user._id)
-    // La sesión queda en cookie; el frontend solo refresca usuario con /auth/me.
     res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions())
 
     res.json({

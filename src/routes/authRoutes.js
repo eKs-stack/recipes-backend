@@ -1,6 +1,3 @@
-/**
- * Aqui declaro las rutas de autenticacion y los middlewares que uso en cada endpoint.
- */
 const express = require('express')
 const router = express.Router()
 const { register, login, me, logout } = require('../controllers/authController')

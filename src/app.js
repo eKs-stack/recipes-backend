@@ -1,6 +1,3 @@
-/**
- * Aqui configuro Express y la seguridad global (Helmet, CORS, CSRF, rate limit) y monto las rutas.
- */
 require('./config/env')
 const express = require('express')
 const cors = require('cors')
@@ -13,7 +10,6 @@ const authRoutes = require('./routes/authRoutes')
 
 const app = express()
 
-// Necesario en plataformas con proxy (Vercel) para obtener IP real.
 app.set('trust proxy', 1)
 
 app.use(helmet())
@@ -27,7 +23,6 @@ const defaultOrigins = [
   'https://guardatureceta.com',
   'https://www.guardatureceta.com',
 ]
-// Si no hay CORS_ORIGINS en entorno, usa esta lista segura por defecto.
 const originAllowlist = allowedOrigins.length ? allowedOrigins : defaultOrigins
 app.use(
   cors({
@@ -41,7 +36,6 @@ app.use(
     credentials: true,
   }),
 )
-// Solo aplica verificación CSRF a peticiones mutables con cookie de sesión.
 app.use(csrfProtection({ allowedOrigins: originAllowlist }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -53,7 +47,6 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 })
 
-// Limitar solo login/registro evita bloquear /auth/me por refrescos de sesión.
 app.use('/api/auth/login', authLimiter)
 app.use('/api/auth/register', authLimiter)
 app.use('/api/auth', authRoutes)

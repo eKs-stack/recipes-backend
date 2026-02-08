@@ -1,6 +1,3 @@
-/**
- * Aqui configuro ESLint para mantener calidad y formato en el backend.
- */
 import js from '@eslint/js'
 import globals from 'globals'
 import prettierPlugin from 'eslint-plugin-prettier'

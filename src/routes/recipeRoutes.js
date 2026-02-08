@@ -1,6 +1,3 @@
-/**
- * Aqui declaro las rutas de recetas, separando endpoints publicos y protegidos.
- */
 const express = require('express')
 const auth = require('../middlewares/auth')
 const validate = require('../middlewares/validate')
