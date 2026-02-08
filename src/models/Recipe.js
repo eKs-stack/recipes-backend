@@ -1,3 +1,6 @@
+/**
+ * Aqui defino el modelo de receta y su relacion con el usuario owner.
+ */
 const mongoose = require('mongoose')
 
 const recipeSchema = new mongoose.Schema(

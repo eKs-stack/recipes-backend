@@ -1,3 +1,6 @@
+/**
+ * Aqui expongo la entrada serverless para Vercel: conecto base de datos y delego en la app.
+ */
 const app = require('../src/app')
 const connectDB = require('../src/config/db')
 

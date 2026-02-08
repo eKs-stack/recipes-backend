@@ -1,3 +1,6 @@
+/**
+ * Aqui manejo la logica de recetas: listados, CRUD, favoritos y permisos por owner/admin.
+ */
 const Recipe = require('../models/Recipe')
 const User = require('../models/User')
 

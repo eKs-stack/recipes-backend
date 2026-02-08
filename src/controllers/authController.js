@@ -1,3 +1,6 @@
+/**
+ * Aqui manejo la autenticacion: registro, login, perfil actual y logout con cookie de sesion.
+ */
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')

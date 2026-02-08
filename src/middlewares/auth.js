@@ -1,3 +1,6 @@
+/**
+ * En este middleware valido el token (Bearer o cookie), verifico el JWT y adjunto req.user.
+ */
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 

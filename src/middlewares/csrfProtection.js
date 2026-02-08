@@ -1,3 +1,6 @@
+/**
+ * En este middleware protejo peticiones mutables validando Origin/Referer cuando hay cookie de sesion.
+ */
 const AUTH_COOKIE_NAME = 'authToken'
 const UNSAFE_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
 

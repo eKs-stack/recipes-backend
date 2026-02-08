@@ -1,3 +1,6 @@
+/**
+ * Aqui defino el modelo de usuario con credenciales, rol y recetas favoritas.
+ */
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema(

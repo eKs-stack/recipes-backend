@@ -1,3 +1,6 @@
+/**
+ * Aqui arranco el backend: cargo entorno, conecto MongoDB y levanto el servidor.
+ */
 require('./config/env')
 const app = require('./app')
 const connectDB = require('./config/db')

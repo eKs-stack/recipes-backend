@@ -1,3 +1,6 @@
+/**
+ * Aqui centralizo los errores de validacion y devuelvo respuestas 400 consistentes.
+ */
 const { validationResult } = require('express-validator')
 
 const validate = (req, res, next) => {

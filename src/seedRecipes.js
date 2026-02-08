@@ -1,3 +1,6 @@
+/**
+ * Aqui preparo datos de ejemplo para poblar la base en local/dev.
+ */
 require('./config/env')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')

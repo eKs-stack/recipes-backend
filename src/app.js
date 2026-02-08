@@ -1,3 +1,6 @@
+/**
+ * Aqui configuro Express y la seguridad global (Helmet, CORS, CSRF, rate limit) y monto las rutas.
+ */
 require('./config/env')
 const express = require('express')
 const cors = require('cors')
