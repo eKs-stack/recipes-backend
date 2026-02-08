@@ -251,7 +251,7 @@ Importa la coleccion en Postman y ajusta `baseUrl` si es necesario.
 ```bash
 npm run dev      # Servidor con nodemon
 npm start        # Servidor en produccion
-npm run seed:recipes # Inserta recetas de ejemplo en local
+npm run seed:recipes # Inserta recetas de ejemplo (bloqueado en production)
 npm run lint     # Ejecuta ESLint
 npm run format   # Formatea el codigo con Prettier
 ```
@@ -276,7 +276,13 @@ SEED_USER_ROLE=admin
 SEED_COUNT=8
 SEED_RESET=true
 SEED_USER_ID=
+ALLOW_SEED_IN_PROD=false
 ```
+
+Nota:
+
+- `seed:recipes` esta bloqueado cuando `NODE_ENV=production` (o `VERCEL=1`).
+- Solo para casos excepcionales, puedes forzarlo con `ALLOW_SEED_IN_PROD=true`.
 
 ---
 

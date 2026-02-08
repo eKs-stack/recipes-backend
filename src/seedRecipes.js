@@ -16,6 +16,18 @@ const SEED_USER_ROLE = process.env.SEED_USER_ROLE || 'admin'
 const SEED_RESET = process.env.SEED_RESET === 'true'
 const SEED_COUNT = Number.parseInt(process.env.SEED_COUNT, 10)
 const SEED_USER_ID = process.env.SEED_USER_ID || ''
+const ALLOW_SEED_IN_PROD = process.env.ALLOW_SEED_IN_PROD === 'true'
+
+const assertSafeSeedEnvironment = () => {
+  const isProductionLike =
+    process.env.NODE_ENV === 'production' || process.env.VERCEL === '1'
+
+  if (isProductionLike && !ALLOW_SEED_IN_PROD) {
+    throw new Error(
+      '[seed] Bloqueado en production. Ejecuta seed solo en local/dev.',
+    )
+  }
+}
 
 const sampleRecipes = [
   {
@@ -250,6 +262,7 @@ const findOrCreateUser = async () => {
 }
 
 const seedRecipes = async () => {
+  assertSafeSeedEnvironment()
   await connectDB()
 
   const user = await findOrCreateUser()
