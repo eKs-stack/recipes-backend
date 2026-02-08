@@ -6,8 +6,8 @@ API REST para gestionar recetas con Node.js, Express y MongoDB. Incluye autentic
 
 ## Enlaces de entrega
 
-- Repo: https://github.com/eKs-stack/recipes-backend
-- Deploy (Vercel): https://recipes-backend-gilt.vercel.app
+- Repo: [https://github.com/eKs-stack/recipes-backend](https://github.com/eKs-stack/recipes-backend)
+- Deploy (Vercel): [https://recipes-backend-gilt.vercel.app](https://recipes-backend-gilt.vercel.app)
 - Postman: [recipes-backend.postman_collection.json](recipes-backend.postman_collection.json)
 
 ---
