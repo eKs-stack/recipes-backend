@@ -6,6 +6,7 @@ const AUTH_COOKIE_NAME = 'authToken'
 const parseCookies = (cookieHeader = '') => {
   if (!cookieHeader) return {}
 
+  // Parser simple para evitar dependencia extra solo para leer authToken.
   return cookieHeader.split(';').reduce((cookies, pair) => {
     const [rawKey, ...rawValueParts] = pair.split('=')
     if (!rawKey) return cookies
@@ -26,7 +27,7 @@ const parseCookies = (cookieHeader = '') => {
 
 const auth = async (req, res, next) => {
   try {
-    // acepta Bearer token o cookie httpOnly
+    // Compatibilidad: token por Bearer (Postman) o por cookie de sesión.
     const header = req.headers.authorization
     const bearerToken =
       header && header.startsWith('Bearer ') ? header.split(' ')[1] : null

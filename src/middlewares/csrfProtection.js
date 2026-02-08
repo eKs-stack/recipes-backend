@@ -24,10 +24,12 @@ const csrfProtection = ({ allowedOrigins = [] } = {}) => {
   const originAllowlist = new Set(normalizedOrigins)
 
   return (req, res, next) => {
+    // GET/HEAD/OPTIONS no cambian estado: no requieren validación CSRF.
     if (!UNSAFE_METHODS.has(req.method)) {
       return next()
     }
 
+    // Si no hay cookie de sesión, no hay contexto autenticado que proteger.
     if (!hasAuthCookie(req.headers.cookie)) {
       return next()
     }
