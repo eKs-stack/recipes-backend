@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
 const rateLimit = require('express-rate-limit')
+const csrfProtection = require('./middlewares/csrfProtection')
 
 const recipeRoutes = require('./routes/recipeRoutes')
 const authRoutes = require('./routes/authRoutes')
@@ -25,7 +26,7 @@ app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true)
-      if (originAllowlist.includes(origin) || origin.endsWith('.vercel.app')) {
+      if (originAllowlist.includes(origin)) {
         return callback(null, true)
       }
       return callback(null, false)
@@ -33,6 +34,7 @@ app.use(
     credentials: true,
   }),
 )
+app.use(csrfProtection({ allowedOrigins: originAllowlist }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
