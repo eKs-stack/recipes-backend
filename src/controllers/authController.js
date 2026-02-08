@@ -2,6 +2,34 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
+const AUTH_COOKIE_NAME = 'authToken'
+const TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000
+
+const getAuthCookieOptions = () => {
+  const isProduction = process.env.NODE_ENV === 'production'
+  const sameSite =
+    process.env.COOKIE_SAME_SITE || (isProduction ? 'none' : 'lax')
+
+  return {
+    httpOnly: true,
+    secure: isProduction || process.env.COOKIE_SECURE === 'true',
+    sameSite,
+    maxAge: TOKEN_MAX_AGE_MS,
+    path: '/',
+  }
+}
+
+const getClearCookieOptions = () => {
+  const clearOptions = getAuthCookieOptions()
+  delete clearOptions.maxAge
+  return clearOptions
+}
+
+const signAuthToken = (userId) =>
+  jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    expiresIn: '7d',
+  })
+
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body
@@ -10,6 +38,13 @@ const register = async (req, res) => {
 
     if (!normalizedEmail || !normalizedUsername || !password) {
       return res.status(400).json({ message: 'Datos incompletos' })
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET no configurado')
+      return res
+        .status(500)
+        .json({ message: 'Error de configuración del servidor' })
     }
 
     const existsByEmail = await User.findOne({ email: normalizedEmail })
@@ -31,12 +66,10 @@ const register = async (req, res) => {
       password: hashedPassword,
     })
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '7d',
-    })
+    const token = signAuthToken(user._id)
+    res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions())
 
     res.status(201).json({
-      token,
       user: {
         id: user._id,
         username: user.username,
@@ -92,12 +125,10 @@ const login = async (req, res) => {
       return res.status(400).json({ message: 'Credenciales inválidas' })
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '7d',
-    })
+    const token = signAuthToken(user._id)
+    res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions())
 
     res.json({
-      token,
       user: {
         id: user._id,
         username: user.username,
@@ -128,4 +159,9 @@ const me = (req, res) => {
   })
 }
 
-module.exports = { register, login, me }
+const logout = (req, res) => {
+  res.clearCookie(AUTH_COOKIE_NAME, getClearCookieOptions())
+  res.status(204).send()
+}
+
+module.exports = { register, login, me, logout }

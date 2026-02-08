@@ -1,16 +1,42 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
+const AUTH_COOKIE_NAME = 'authToken'
+
+const parseCookies = (cookieHeader = '') => {
+  if (!cookieHeader) return {}
+
+  return cookieHeader.split(';').reduce((cookies, pair) => {
+    const [rawKey, ...rawValueParts] = pair.split('=')
+    if (!rawKey) return cookies
+
+    const key = rawKey.trim()
+    const rawValue = rawValueParts.join('=').trim()
+    if (!key) return cookies
+
+    try {
+      cookies[key] = decodeURIComponent(rawValue)
+    } catch {
+      cookies[key] = rawValue
+    }
+
+    return cookies
+  }, {})
+}
+
 const auth = async (req, res, next) => {
   try {
-    // espera un Bearer token en el header auth
+    // acepta Bearer token o cookie httpOnly
     const header = req.headers.authorization
+    const bearerToken =
+      header && header.startsWith('Bearer ') ? header.split(' ')[1] : null
+    const cookieToken = parseCookies(req.headers.cookie)[AUTH_COOKIE_NAME]
+    const token = bearerToken || cookieToken
 
-    if (!header || !header.startsWith('Bearer ')) {
+    if (!token) {
       return res.status(401).json({ message: 'No token' })
     }
 
-    const token = header.split(' ')[1]
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
     const user = await User.findById(decoded.id).select('-password')
